@@ -3,7 +3,9 @@ import {
   View,
   Animated,
   PanResponder,
-  Dimensions
+  Dimensions,
+  LayoutAnimation,
+  UIManager
 } from 'react-native';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -55,6 +57,20 @@ class Deck extends Component {
 
     // stay out of the habit of mutating state directly, biting my tongue cause of the official docs
     this.state = { panResponder, position, index: 0 };
+  }
+
+  // called whenever component is about to be re-rendered with new set of props
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.data !== this.props.data) {
+      this.setState({ index: 0 });
+    }
+  }
+
+  componentWillUpdate() {
+    // recommended for testing on android as well
+    UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
+    // will apply nice looking animation to any changes made to component
+    LayoutAnimation.spring();
   }
 
   forceSwipe(direction) {
